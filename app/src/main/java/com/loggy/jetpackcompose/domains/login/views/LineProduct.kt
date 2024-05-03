@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -30,10 +31,17 @@ import com.loggy.jetpackcompose.navigation.AppScreens
 
 @Composable
 fun LineProductScreen(navController: NavController){
+
+    val imageList = listOf(
+        R.drawable.icon_lineproduction_oilcan,
+        R.drawable.icon_lineproduction_oilcan2,
+    )
+
     Column(
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        Spacer(modifier = Modifier.size(50.dp))
         Text(
             text = "Selecciona tu linea de producción donde vas a trabajar",
             style = TextStyle(
@@ -45,6 +53,7 @@ fun LineProductScreen(navController: NavController){
                 textAlign = TextAlign.Center,
             )
         )
+        Spacer(modifier = Modifier.size(100.dp))
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(10.dp),
@@ -56,7 +65,7 @@ fun LineProductScreen(navController: NavController){
                     ) {
 
                             Image(
-                                painter = painterResource(id = R.drawable.logo_sin_letras), // Replace with your image resource
+                                painter = painterResource(id = imageList[index % imageList.size]), // Replace with your image resource
                                 contentDescription = "Image $index",
                                 modifier = Modifier
                                     .size(100.dp)

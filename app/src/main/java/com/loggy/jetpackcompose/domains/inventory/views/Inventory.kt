@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.contentColorFor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,6 +69,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
     ) {
 
         TopAppBar(
+
             title = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -134,6 +137,13 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                                fontSize = 20.sp
                            )
                            var number = index
+                           Button(onClick = { viewModel.deleteProduct(number) },
+                               modifier = Modifier.background(Color.Transparent)
+                           ) {
+                               Icon(painter = painterResource(id = R.drawable.icon_delete),
+                                   contentDescription = "Eliminar producto", modifier = Modifier.size(30.dp), tint = Color.Red )
+
+                           }
 
                        }
 

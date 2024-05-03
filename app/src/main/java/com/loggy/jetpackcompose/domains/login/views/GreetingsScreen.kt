@@ -29,15 +29,16 @@ fun GreetingsScreen(navController: NavController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+
         Image(
             painter = painterResource(id = R.drawable.logo_sin_letras),
             contentDescription = "Logo image",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(250.dp)
         )
 
         Spacer(modifier = Modifier.size(20.dp))
 
-        Text(text = "Bienvenido", fontSize = 28.sp, fontWeight = FontWeight.Medium)
+        Text(text = "Bienvenido, Usuario", fontSize = 28.sp, fontWeight = FontWeight.Medium)
 
         LaunchedEffect(key1 = true) {
             delay(3000) // Espera 3 segundos
