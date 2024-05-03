@@ -45,7 +45,7 @@ fun HomeScreen(navController: NavController){
             columns = GridCells.Fixed(1),
             contentPadding = PaddingValues(10.dp),
             content = {
-                items(2) { index ->
+                items(1) { index ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center

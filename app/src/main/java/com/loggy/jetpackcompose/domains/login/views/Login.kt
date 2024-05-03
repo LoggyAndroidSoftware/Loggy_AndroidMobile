@@ -37,11 +37,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
 import com.loggy.jetpackcompose.navigation.AppScreens
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 
@@ -113,15 +115,14 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
 
         Button(
             onClick = {
-                /*
-                viewModel.validateUser(state.username,state.password)
-                if(state.loginSuccess){
-                    navController.navigate(route = AppScreens.GreetingsScreen.route)
-                } else {
-
+                viewModel.viewModelScope.launch {
+                    viewModel.loginUser(state.username, state.password)
                 }
-                
-                 */
+                if(state.loginSuccess){
+                    navController.navigate(AppScreens.LoginScreen.route)
+                } else {
+                    navController.navigate(AppScreens.GreetingsScreen.route)
+                }
             }
         ) {
             Text("Iniciar Sesión")
