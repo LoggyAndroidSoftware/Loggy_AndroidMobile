@@ -55,9 +55,9 @@ fun HomeScreen(navController: NavController){
                             painter = painterResource(id = R.drawable.logo_sin_letras), // Replace with your image resource
                             contentDescription = "Image $index",
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(300.dp)
                                 .clickable {
-                                    // Navigate to the next screen
+                                    navController.navigate(AppScreens.InventoryScreen.route)
                                 }
                         )
                         Text(text = "Línea ${index + 1}")

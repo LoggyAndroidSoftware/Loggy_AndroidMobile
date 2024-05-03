@@ -11,7 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.room.Room
+import com.example.inventorymodule.components.ProductViewModel
 import com.loggy.jetpackcompose.database.LoggyDB
+import com.loggy.jetpackcompose.database.ProductDB
+import com.loggy.jetpackcompose.domains.inventory.models.repository.ProductRepository
 import com.loggy.jetpackcompose.domains.login.models.repositories.UserRepository
 import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
 import com.loggy.jetpackcompose.navigation.AppNavigation
@@ -24,11 +27,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val db = Room.databaseBuilder(this, LoggyDB::class.java, "product-db").fallbackToDestructiveMigration().build()
         val dao = db.dao
+
+        val dbProducts = Room.databaseBuilder(this, ProductDB::class.java, "product-db").fallbackToDestructiveMigration().build()
+        val daoProducts = dbProducts.dao
+
+        val productRepository = ProductRepository(daoProducts)
+        val productViewModel = ProductViewModel(productRepository)
+
         val loginRepository = UserRepository(dao)
         val loginViewModel = LoginViewModel(loginRepository)
         setContent {
             LoggyJPCTheme {
-                AppNavigation(loginViewModel)
+                AppNavigation(loginViewModel, productViewModel)
             }
         }
     }
