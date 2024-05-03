@@ -41,6 +41,7 @@ import androidx.navigation.NavHostController
 
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
+import com.loggy.jetpackcompose.navigation.AppScreens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 
@@ -113,16 +114,14 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
         Button(
             onClick = {
                 /*
-                val user:String=email
-                val pass:String=password
-                val foundUser = viewModel.listaUsers.find{ it.email == user && it.phone == pass}
-                if (foundUser != null){
+                viewModel.validateUser(state.username,state.password)
+                if(state.loginSuccess){
+                    navController.navigate(route = AppScreens.GreetingsScreen.route)
+                } else {
 
-                    loginSuccess = true
-                } else{
-                    println("Inicio de sesión fallido")
                 }
-                */
+                
+                 */
             }
         ) {
             Text("Iniciar Sesión")

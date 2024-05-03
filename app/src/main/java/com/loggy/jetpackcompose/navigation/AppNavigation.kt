@@ -6,6 +6,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.login.App.GreetingsScreen
 import com.example.login.App.LoginScreen
+import com.loggy.jetpackcompose.domains.login.views.HomeScreen
+import com.loggy.jetpackcompose.domains.login.views.LineProductScreen
 import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
 
 @Composable
@@ -17,6 +19,12 @@ fun AppNavigation(viewLoginModel: LoginViewModel){
         }
         composable(AppScreens.GreetingsScreen.route){
             GreetingsScreen(navController)
+        }
+        composable(AppScreens.LineProductScreen.route){
+            LineProductScreen(navController)
+        }
+        composable(AppScreens.HomeScreen.route){
+            HomeScreen(navController)
         }
     }
 }
