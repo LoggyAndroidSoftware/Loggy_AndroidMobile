@@ -10,37 +10,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.room.Room
+import com.example.inventorymodule.components.ProductViewModel
+import com.loggy.jetpackcompose.database.LoggyDB
+import com.loggy.jetpackcompose.database.ProductDB
+import com.loggy.jetpackcompose.domains.inventory.models.repository.ProductRepository
+import com.loggy.jetpackcompose.domains.login.models.repositories.UserRepository
+import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
+import com.loggy.jetpackcompose.navigation.AppNavigation
 import com.loggy.jetpackcompose.ui.theme.LoggyJPCTheme
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val db = Room.databaseBuilder(this, LoggyDB::class.java, "product-db").fallbackToDestructiveMigration().build()
+        val dao = db.dao
+
+        val dbProducts = Room.databaseBuilder(this, ProductDB::class.java, "product-db").fallbackToDestructiveMigration().build()
+        val daoProducts = dbProducts.dao
+
+        val productRepository = ProductRepository(daoProducts)
+        val productViewModel = ProductViewModel(productRepository)
+
+        val loginRepository = UserRepository(dao)
+        val loginViewModel = LoginViewModel(loginRepository)
         setContent {
             LoggyJPCTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+                AppNavigation(loginViewModel, productViewModel)
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    LoggyJPCTheme {
-        Greeting("Android")
-    }
-}
