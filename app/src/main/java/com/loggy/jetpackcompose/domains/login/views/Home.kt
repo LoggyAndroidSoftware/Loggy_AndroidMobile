@@ -31,7 +31,7 @@ fun HomeScreen(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Selecciona tu linea de producción donde vas a trabajar",
+            text = "Funciones",
             style = TextStyle(
                 fontSize = 25.sp,
                 fontFamily = FontFamily(Font(R.font.zillaslab)),
@@ -52,12 +52,12 @@ fun HomeScreen(navController: NavController){
                     ) {
 
                         Image(
-                            painter = painterResource(id = R.drawable.logo_sin_letras), // Replace with your image resource
+                            painter = painterResource(id = R.drawable.icon_home_inventory), // Replace with your image resource
                             contentDescription = "Image $index",
                             modifier = Modifier
-                                .size(100.dp)
+                                .size(300.dp)
                                 .clickable {
-                                    // Navigate to the next screen
+                                    navController.navigate(AppScreens.InventoryScreen.route)
                                 }
                         )
                         Text(text = "Línea ${index + 1}")
