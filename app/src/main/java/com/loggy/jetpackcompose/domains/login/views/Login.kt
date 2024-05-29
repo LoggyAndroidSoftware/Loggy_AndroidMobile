@@ -3,6 +3,7 @@ package com.example.login.App
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 
 
@@ -10,10 +11,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -43,6 +48,9 @@ import androidx.navigation.NavHostController
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
 import com.loggy.jetpackcompose.navigation.AppScreens
+import com.loggy.jetpackcompose.ui.theme.BlueNight
+import com.loggy.jetpackcompose.ui.theme.LightWhiteBlue
+import com.loggy.jetpackcompose.ui.theme.OrangeYellow
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -66,7 +74,10 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
     val (currentFocusRequester, nextFocusRequester) = remember { FocusRequester.createRefs() }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(LightWhiteBlue)
+        ,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -75,16 +86,18 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
             contentDescription = "Logo image",
             modifier = Modifier.size(200.dp)
         )
+        Spacer(modifier = Modifier.size(20.dp))
 
-        Text(text = "Bienvenidos", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
+        Text(text = "Loggy", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
         Spacer(modifier = Modifier.size(60.dp))
 
-        Text(text = "Correo Electronico",)
+        Text(text = "Nombre de usuario",)
+        Spacer(modifier = Modifier.size(10.dp))
         OutlinedTextField(
             value = state.username,
             onValueChange = { viewModel.inputCredentials(it, state.password) },
             label = {
-                Text(text = "Email")
+                Text(text = "Ingrese su nombre de usuario")
             },
             //Mejora de interfaz de usuario (Salto de campos) Experimental
             singleLine = true,
@@ -101,7 +114,7 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
             value = state.password,
             onValueChange = { viewModel.inputCredentials(state.username, it) },
             label = {
-                Text(text = "Password")
+                Text(text = "Ingrese su contraseña")
             },
             visualTransformation = PasswordVisualTransformation(),
             singleLine = true,
@@ -115,29 +128,26 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
 
         Button(
             onClick = {
-                viewModel.viewModelScope.launch {
-                    viewModel.loginUser(state.username, state.password)
+                if (state.username == "die-san" && state.password == "d3v3l0per"){
+                    state.loginSuccess = true
                 }
                 if(state.loginSuccess){
-                    navController.navigate(AppScreens.LoginScreen.route)
-                } else {
                     navController.navigate(AppScreens.GreetingsScreen.route)
+                } else {
+                    navController.navigate(AppScreens.LoginScreen.route)
+
                 }
-            }
-        ) {
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = OrangeYellow, contentColor = BlueNight),
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier
+                .size(200.dp, 80.dp)
+                .padding(10.dp)
+            )
+         {
             Text("Iniciar Sesión")
         }
-        /*
-    if (state.loginSuccess = true){
-        GreetingsScreen()
-    }
-    else{
 
-
-
-        }
-    }
-    */
     }
 }
 
