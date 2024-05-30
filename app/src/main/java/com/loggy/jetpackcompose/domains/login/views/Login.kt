@@ -155,7 +155,8 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
                     if(state.loginSuccess){
                         navController.navigate(AppScreens.GreetingsScreen.route)
                     } else {
-                        navController.navigate(AppScreens.LoginScreen.route)
+                        passwordError = "Credenciales incorrectas"
+                        usernameError = "Credenciales incorrectas"
                     }
                 }
             },

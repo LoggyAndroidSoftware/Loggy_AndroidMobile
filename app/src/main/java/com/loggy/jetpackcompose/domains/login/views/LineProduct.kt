@@ -1,11 +1,14 @@
 package com.loggy.jetpackcompose.domains.login.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -27,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.navigation.AppScreens
+import com.loggy.jetpackcompose.ui.theme.LightWhiteBlue
 
 
 @Composable
@@ -38,16 +42,21 @@ fun LineProductScreen(navController: NavController){
     )
 
     Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+            .background(LightWhiteBlue)
+        ,
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.size(50.dp))
         Text(
-            text = "Selecciona tu linea de producción donde vas a trabajar",
+            text = "Selecciona la linea de producción donde vas a trabajar",
             style = TextStyle(
                 fontSize = 25.sp,
                 fontFamily = FontFamily(Font(R.font.zillaslab)),
-                fontWeight = FontWeight(700),
+                fontWeight = FontWeight(800),
                 color = Color(0xFF000000),
 
                 textAlign = TextAlign.Center,
@@ -73,7 +82,8 @@ fun LineProductScreen(navController: NavController){
                                         navController.navigate(AppScreens.HomeScreen.route)
                                         }
                             )
-                            Text(text = "Línea ${index + 1}")
+                            Text(text = "Línea ${index + 1}", fontFamily = FontFamily(Font(R.font.zillaslab)), fontSize = 15.sp, fontWeight = FontWeight(400))
+                            Spacer(modifier = Modifier.size(15.dp))
                         }
 
                     }
