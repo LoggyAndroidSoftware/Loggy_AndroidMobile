@@ -115,9 +115,7 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
 
         Button(
             onClick = {
-                viewModel.viewModelScope.launch {
-                    viewModel.loginUser(state.username, state.password)
-                }
+
                 if(state.loginSuccess){
                     navController.navigate(AppScreens.LoginScreen.route)
                 } else {

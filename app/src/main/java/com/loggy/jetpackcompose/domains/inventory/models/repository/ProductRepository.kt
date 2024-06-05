@@ -33,4 +33,25 @@ class ProductRepository (private val ProductsDAO: ProductDAO){
         ProductsDAO.deleteProduct(productId)
     }
 
+    suspend fun updateProduct(product: Product){
+        ProductsDAO.updateProduct(
+            ProductEntity(
+                id = product.id,
+                name = product.name,
+                brand = product.brand,
+                stock = product.stock
+            )
+        )
+    }
+
+    suspend fun getProductById(productId: Int): Product {
+        val productEntity = ProductsDAO.getProductById(productId)
+        return Product(
+            id = productEntity.id,
+            name = productEntity.name,
+            brand = productEntity.brand,
+            stock = productEntity.stock
+        )
+    }
+
 }

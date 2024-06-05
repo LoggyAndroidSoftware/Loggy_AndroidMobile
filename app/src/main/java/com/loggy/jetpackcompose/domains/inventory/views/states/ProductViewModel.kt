@@ -64,4 +64,24 @@ class ProductViewModel(
             }
         }
     }
+    fun updateProduct() {
+        val product = Product(
+            id = state.id,
+            name = state.name,
+            brand = state.brand,
+            stock = state.stock
+        )
+        viewModelScope.launch { repository.updateProduct(product) }
+    }
+    fun getProduct(productId: Int) {
+        viewModelScope.launch {
+            val product = repository.getProductById(productId)
+            state = state.copy(
+                id = product.id,
+                name = product.name,
+                brand = product.brand,
+                stock = product.stock
+            )
+        }
+    }
 }

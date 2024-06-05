@@ -90,10 +90,10 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                 )
             },
 
-        )
+            )
         Spacer(modifier = Modifier.height(10.dp))
         Button(onClick = {
-             navController.navigate(AppScreens.InventoryAddItemScreen.route)
+            navController.navigate(AppScreens.InventoryAddItemScreen.route)
         },
             modifier = Modifier
                 .width(350.dp)
@@ -113,45 +113,55 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.Start,
         ) {
-           items(products.size){ index ->
-               Column(
-                   modifier = Modifier.fillMaxWidth()
-               ) {
-                   Row(
-                       modifier = Modifier.fillMaxWidth(),
-                       horizontalArrangement = Arrangement.Center){
-                       Column(modifier = Modifier.fillMaxWidth()) {
-                           Text(
-                               text = "Nombre del producto: " + products[index].name,
-                               fontFamily = FontFamily(Font(R.font.zillaslab)),
-                               fontSize = 20.sp
-                           )
-                           Text(
-                               text = "Marca: " + products[index].brand,
-                               fontFamily = FontFamily(Font(R.font.zillaslab)),
-                               fontSize = 20.sp
-                           )
-                           Text(
-                               text = "Cantidad: " + products[index].stock.toString(),
-                               fontFamily = FontFamily(Font(R.font.zillaslab)),
-                               fontSize = 20.sp
-                           )
-                           var number = index
-                           Button(onClick = { viewModel.deleteProduct(number) },
-                               modifier = Modifier.background(Color.Transparent)
-                           ) {
-                               Icon(painter = painterResource(id = R.drawable.icon_delete),
-                                   contentDescription = "Eliminar producto", modifier = Modifier.size(30.dp), tint = Color.Red )
-
-                           }
-
-                       }
-
-                   }
-                   
-               }
-               Spacer(modifier = Modifier.height(20.dp))
-           }
+            items(products.size){ index ->
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center){
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "Nombre del producto: " + products[index].name,
+                                fontFamily = FontFamily(Font(R.font.zillaslab)),
+                                fontSize = 20.sp
+                            )
+                            Text(
+                                text = "Marca: " + products[index].brand,
+                                fontFamily = FontFamily(Font(R.font.zillaslab)),
+                                fontSize = 20.sp
+                            )
+                            Text(
+                                text = "Cantidad: " + products[index].stock.toString(),
+                                fontFamily = FontFamily(Font(R.font.zillaslab)),
+                                fontSize = 20.sp
+                            )
+                            var number = index
+                            Row {
+                                Button(onClick = { viewModel.deleteProduct(index) },
+                                    modifier = Modifier.background(Color.Transparent)
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.icon_delete),
+                                        contentDescription = "Eliminar producto", modifier = Modifier.size(30.dp), tint = Color.Red )
+                                }
+                                Button(onClick = {
+                                    if (products[index].id != null) {
+                                        navController.navigate(AppScreens.InventoryEditItemScreen.routeWithId(products[index].id!!))
+                                    } else {
+                                        // Mostrar un mensaje de error o manejar de otra manera
+                                    }
+                                },
+                                    modifier = Modifier.background(Color.Transparent)
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.icon_home),
+                                        contentDescription = "Editar producto", modifier = Modifier.size(30.dp), tint = Color.Blue )
+                                }
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+            }
         }
         Column(
             modifier = Modifier.fillMaxSize(),
