@@ -1,6 +1,7 @@
 package com.example.inventorymodule.components
 
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +16,9 @@ import kotlinx.coroutines.launch
 class ProductViewModel(
     private val repository: ProductRepository
 ): ViewModel() {
+    // Busqueda de productos
+    var searchText by mutableStateOf("")
+    private set
 
     var state by mutableStateOf(ProductState())
         private set
@@ -24,6 +28,14 @@ class ProductViewModel(
     // Crea un StateFlow público para exponer a la UI
     val products: StateFlow<List<Product>> = _products
 
+    //Lista filtrada de Productos
+    private val _filteredProducts = MutableStateFlow(listOf<Product>())
+    val filteredProducts: StateFlow<List<Product>> = _filteredProducts
+
+    fun updateSearchText(newText: String) {
+        searchText = newText
+        _filteredProducts.value = products.value.filter { it.name.contains(searchText, ignoreCase = true) }
+    }
     fun onNameChange(name: String, brand: String, stock: Int) {
         state = state.copy(
             name = name,
@@ -34,6 +46,7 @@ class ProductViewModel(
     fun getProducts() {
         viewModelScope.launch {
             _products.value = repository.getProducts()
+            _filteredProducts.value = repository.getProducts()
         }
     }
 
@@ -61,6 +74,7 @@ class ProductViewModel(
 
                 // Actualiza la lista de productos
                 _products.value = repository.getProducts()
+                _filteredProducts.value = _products.value.filter { it.name.contains(searchText, ignoreCase = true) }
             }
         }
     }

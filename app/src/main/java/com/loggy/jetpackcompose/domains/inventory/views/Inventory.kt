@@ -79,7 +79,7 @@ import com.loggy.jetpackcompose.ui.theme.SkyNightBlue
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController){
-    val products by viewModel.products.collectAsState()
+    val products by viewModel.filteredProducts.collectAsState()
     LaunchedEffect(key1 = Unit) {
         viewModel.getProducts()
     }
@@ -186,78 +186,78 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
 
 
             Spacer(modifier = Modifier.height(10.dp))
-            SearchWithFilters()
+            SearchWithFilters(viewModel)
             Spacer(modifier = Modifier.height(10.dp))
-            LazyColumn {
-                items(products.size) { index ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
+            if (products.isEmpty()) {
+                Spacer(modifier = Modifier.height(60.dp))
+                Text(
+                    text = "Parece que no tienes\nningun elemento en\nesta lista, para agregar un \nproducto, presiona el botón +\n",
+                    textAlign = TextAlign.Center,
+                    fontFamily = FontFamily(Font(R.font.zillaslab)),
+                    fontSize = 20.sp
+                )
+            }
+            else {
+                LazyColumn {
+                    items(products.size) { index ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
                         ) {
-                        Row(
-                            modifier = Modifier.padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.SpaceBetween
+                            Row(
+                                modifier = Modifier.padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = products[index].name, fontWeight = FontWeight.Bold)
-                                Text(text = products[index].brand + " - " + products[index].stock.toString())
-                            }
-                            Column(
-                                verticalArrangement = Arrangement.SpaceBetween,
-                                horizontalAlignment = Alignment.End
-                            ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.vector_edit),
-                                    contentDescription = "Editar producto",
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .clickable
-                                        {
-                                            if (products[index].id != null) {
-                                                navController.navigate(
-                                                    AppScreens.InventoryEditItemScreen.routeWithId(
-                                                        products[index].id!!
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    verticalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(text = products[index].name, fontWeight = FontWeight.Bold)
+                                    Text(text = products[index].brand + " - " + products[index].stock.toString())
+                                }
+                                Column(
+                                    verticalArrangement = Arrangement.SpaceBetween,
+                                    horizontalAlignment = Alignment.End
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.vector_edit),
+                                        contentDescription = "Editar producto",
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clickable
+                                            {
+                                                if (products[index].id != null) {
+                                                    navController.navigate(
+                                                        AppScreens.InventoryEditItemScreen.routeWithId(
+                                                            products[index].id!!
+                                                        )
                                                     )
-                                                )
-                                            } else {
-                                                // Mostrar un mensaje de error o manejar de otra manera
+                                                } else {
+                                                    // Mostrar un mensaje de error o manejar de otra manera
+                                                }
                                             }
-                                        }
-                                )
-                                Icon(
-                                    painter = painterResource(id = R.drawable.icon_delete),
-                                    contentDescription = "Eliminar producto",
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .clickable { viewModel.deleteProduct(index) }
-                                )
+                                    )
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.icon_delete),
+                                        contentDescription = "Eliminar producto",
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clickable { viewModel.deleteProduct(index) }
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
-            /*
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Parece que no tienes\nningun elemento en\nesta lista, para agregar un \nproducto, presiona el botón +\n",
-                    textAlign = TextAlign.Center,
-                    fontFamily = FontFamily(Font(R.font.zillaslab)),
-                )
-            }
-            */
+
         }
     }
 }
 
 @Composable
-fun SearchWithFilters() {
+fun SearchWithFilters(viewModel: ProductViewModel) {
 
     var searchText by remember { mutableStateOf("") }
 
@@ -266,15 +266,19 @@ fun SearchWithFilters() {
     ) {
         TextField(
             value = searchText,
-            onValueChange = { newText -> searchText = newText },
+            onValueChange = { newText ->
+                searchText = newText
+                viewModel.updateSearchText(newText)
+            },
             label = { Text("Buscar") },
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {  }
+                .clickable {
+
+                }
         )
         // ...
     }
-
 }
 
 
