@@ -10,6 +10,7 @@ import com.example.login.App.LoginScreen
 import com.loggy.jetpackcompose.domains.inventory.views.InventoryAddItem
 import com.loggy.jetpackcompose.domains.inventory.views.InventoryEditItem
 import com.loggy.jetpackcompose.domains.inventory.views.InventoryMain
+
 import com.loggy.jetpackcompose.domains.login.views.HomeScreen
 import com.loggy.jetpackcompose.domains.login.views.LineProductScreen
 import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
@@ -17,7 +18,7 @@ import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
 @Composable
 fun AppNavigation(viewLoginModel: LoginViewModel, viewProductModel: ProductViewModel){
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route){
+    NavHost(navController = navController, startDestination = AppScreens.InventoryScreen.route){
         composable(AppScreens.LoginScreen.route){
             LoginScreen(viewLoginModel, navController)
         }
@@ -46,5 +47,8 @@ fun AppNavigation(viewLoginModel: LoginViewModel, viewProductModel: ProductViewM
             }
         }
 
+        composable(AppScreens.TestScreen.route){
+
+        }
     }
 }

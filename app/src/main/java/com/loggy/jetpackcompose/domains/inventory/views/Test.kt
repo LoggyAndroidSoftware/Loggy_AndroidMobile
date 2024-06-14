@@ -1,90 +1,69 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.loggy.jetpackcompose.domains.inventory.views
-
-
 
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+
 import androidx.compose.foundation.layout.Column
+
+
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
-
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
-
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 
-
-
-import com.example.inventorymodule.components.ProductViewModel
 import com.loggy.jetpackcompose.R
-import com.loggy.jetpackcompose.domains.inventory.models.Product
 import com.loggy.jetpackcompose.navigation.AppScreens
-import com.loggy.jetpackcompose.ui.theme.LoggyBackground
+
 import com.loggy.jetpackcompose.ui.theme.LoggyBackground2
 import com.loggy.jetpackcompose.ui.theme.LoggyYellow
 import com.loggy.jetpackcompose.ui.theme.SkyNightBlue
 
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController){
-    val products by viewModel.products.collectAsState()
-    LaunchedEffect(key1 = Unit) {
-        viewModel.getProducts()
-    }
+fun TestView() {
     var showDialog by remember { mutableStateOf(false) }
-
     Scaffold(
         containerColor = LoggyBackground2,
         topBar = {
@@ -93,7 +72,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                 modifier = Modifier
                     .fillMaxWidth(),
                 //Modificar el espacio de los objetos de la barra de navegación
-                colors = TopAppBarDefaults.topAppBarColors(
+                colors = topAppBarColors(
                     containerColor = SkyNightBlue,
                     titleContentColor = LoggyYellow
                 ),
@@ -119,7 +98,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                             textAlign = TextAlign.Justify,
                             fontFamily = FontFamily(Font(R.font.zillaslab)),
 
-                            );
+                        );
                         Icon(
                             painter = painterResource(id = R.drawable.vector_manage_search),
                             contentDescription = "Inventory Icon",
@@ -146,14 +125,14 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                 containerColor = SkyNightBlue,
                 contentColor = LoggyYellow,
                 onClick = {
-                    navController.navigate(AppScreens.InventoryAddItemScreen.route)
+                    navController.navigate(AppScreens.InventoryAddItemScreen.route
                 },
             ){
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
     ) { innerPadding ->
-        // Cuadro emergente de filtros
+                // Cuadro emergente de filtros
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
@@ -178,7 +157,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                 }
             )
         }
-
+        
         Column(
             modifier = Modifier.padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -187,14 +166,14 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
 
             Spacer(modifier = Modifier.height(10.dp))
             SearchWithFilters()
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             LazyColumn {
                 items(products.size) { index ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
-                        ) {
+                            .padding(8.dp)
+                    ) {
                         Row(
                             modifier = Modifier.padding(8.dp),
                             verticalAlignment = Alignment.CenterVertically
@@ -240,7 +219,6 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                     }
                 }
             }
-            /*
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -251,10 +229,12 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                     fontFamily = FontFamily(Font(R.font.zillaslab)),
                 )
             }
-            */
+
         }
     }
+
 }
+
 
 @Composable
 fun SearchWithFilters() {
@@ -277,6 +257,4 @@ fun SearchWithFilters() {
 
 }
 
-
-
-
+*/

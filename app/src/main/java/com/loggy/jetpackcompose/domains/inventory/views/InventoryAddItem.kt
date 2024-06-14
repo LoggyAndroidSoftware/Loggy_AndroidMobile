@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -29,17 +30,17 @@ import com.example.inventorymodule.components.ProductViewModel
 import com.loggy.jetpackcompose.R
 
 
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
 @Composable
 fun InventoryAddItem(viewModel: ProductViewModel, navController: NavController){
-
-
     Scaffold {
         BodyContent(viewModel, navController)
     }
 
-
 }
+
 
 @Composable
 fun BodyContent(viewModel: ProductViewModel, navController: NavController){

@@ -12,4 +12,6 @@ sealed class AppScreens(val route: String) {
     object InventoryEditItemScreen: AppScreens("inventory_edit_item_screen/{productId}") {
         fun routeWithId(productId: Int) = "inventory_edit_item_screen/$productId"
     }
+
+    object TestScreen: AppScreens("test_screen")
 }
