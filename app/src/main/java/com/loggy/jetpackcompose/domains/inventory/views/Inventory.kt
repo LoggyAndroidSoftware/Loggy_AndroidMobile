@@ -5,6 +5,7 @@ package com.loggy.jetpackcompose.domains.inventory.views
 
 
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 
@@ -62,6 +64,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 
 
@@ -69,21 +72,26 @@ import androidx.navigation.NavHostController
 import com.example.inventorymodule.components.ProductViewModel
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.domains.inventory.models.Product
+import com.loggy.jetpackcompose.domains.inventory.views.utils.getOutputDirectory
 import com.loggy.jetpackcompose.navigation.AppScreens
 import com.loggy.jetpackcompose.ui.theme.LoggyBackground
 import com.loggy.jetpackcompose.ui.theme.LoggyBackground2
 import com.loggy.jetpackcompose.ui.theme.LoggyYellow
 import com.loggy.jetpackcompose.ui.theme.SkyNightBlue
 
+import com.loggy.jetpackcompose.domains.inventory.views.utils.*
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController){
     val products by viewModel.filteredProducts.collectAsState()
     LaunchedEffect(key1 = Unit) {
         viewModel.getProducts()
     }
     var showDialog by remember { mutableStateOf(false) }
+    var showPrintDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = LoggyBackground2,
@@ -124,15 +132,18 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                             painter = painterResource(id = R.drawable.vector_manage_search),
                             contentDescription = "Inventory Icon",
                             tint = LoggyYellow,
-                            modifier = Modifier.aspectRatio(0.05f)
-                                .clickable{ showDialog = true }
+                            modifier = Modifier
+                                .aspectRatio(0.05f)
+                                .clickable { showDialog = true }
 
                         );
                         Icon(
                             painter = painterResource(id = R.drawable.vector_printer),
                             contentDescription = "Inventory Icon",
                             tint = LoggyYellow,
-                            modifier = Modifier.aspectRatio(0.05f)
+                            modifier = Modifier
+                                .aspectRatio(0.05f)
+                                .clickable { showPrintDialog = true }
                         )
                     }
 
@@ -153,6 +164,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
             }
         }
     ) { innerPadding ->
+
         // Cuadro emergente de filtros
         if (showDialog) {
             AlertDialog(
@@ -177,6 +189,15 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                     }
                 }
             )
+        }
+        // Cuadro emergente de impresión
+        if(showPrintDialog){
+            val context = LocalContext.current
+            val productsToPrint = products
+            LaunchedEffect(key1 = productsToPrint) {
+                viewModel.printProducts(context, productsToPrint)
+            }
+            showPrintDialog = false
         }
 
         Column(
@@ -256,6 +277,8 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
     }
 }
 
+
+
 @Composable
 fun SearchWithFilters(viewModel: ProductViewModel) {
 
@@ -280,7 +303,6 @@ fun SearchWithFilters(viewModel: ProductViewModel) {
         // ...
     }
 }
-
 
 
 

@@ -1,6 +1,7 @@
 package com.example.inventorymodule.components
 
 
+import android.content.Context
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,9 +10,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.loggy.jetpackcompose.domains.inventory.models.Product
 import com.loggy.jetpackcompose.domains.inventory.models.repository.ProductRepository
+import com.loggy.jetpackcompose.domains.inventory.views.utils.createPDF
+import com.loggy.jetpackcompose.domains.inventory.views.utils.getOutputDirectory
+import com.loggy.jetpackcompose.domains.inventory.views.utils.printPDF
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProductViewModel(
     private val repository: ProductRepository
@@ -96,6 +102,17 @@ class ProductViewModel(
                 brand = product.brand,
                 stock = product.stock
             )
+        }
+    }
+
+    suspend fun printProducts(context: Context, products: List<Product>) {
+        withContext(Dispatchers.IO) {
+            // Crear el PDF
+            val filePath = getOutputDirectory().absolutePath + "/myFile.pdf"
+            createPDF(products, filePath)
+
+            // Imprimir el PDF
+            printPDF(context, filePath)
         }
     }
 }
