@@ -245,7 +245,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                                         painter = painterResource(id = R.drawable.vector_edit),
                                         contentDescription = "Editar producto",
                                         modifier = Modifier
-                                            .size(24.dp)
+                                            .size(50.dp)
                                             .clickable
                                             {
                                                 if (products[index].id != null) {
@@ -263,7 +263,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                                         painter = painterResource(id = R.drawable.icon_delete),
                                         contentDescription = "Eliminar producto",
                                         modifier = Modifier
-                                            .size(24.dp)
+                                            .size(50.dp)
                                             .clickable { viewModel.deleteProduct(index) }
                                     )
                                 }
