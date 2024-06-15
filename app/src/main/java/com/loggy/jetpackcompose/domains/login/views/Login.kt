@@ -66,8 +66,11 @@ fun LoginScreen( viewLoginModel: LoginViewModel ,navController: NavHostControlle
 @Composable
 fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
 
+
     val state = viewModel.state
 
+    var usernameError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
     // Mejora de la interfaz de usuario (Salto de campos) Experimental
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -91,13 +94,13 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
         Text(text = "Loggy", fontSize = 28.sp, fontWeight = FontWeight.ExtraBold)
         Spacer(modifier = Modifier.size(60.dp))
 
-        Text(text = "Nombre de usuario",)
+        Text(text = "Nombre de usuario", fontWeight = FontWeight.Bold, fontSize = 20.sp)
         Spacer(modifier = Modifier.size(10.dp))
         OutlinedTextField(
             value = state.username,
             onValueChange = { viewModel.inputCredentials(it, state.password) },
             label = {
-                Text(text = "Ingrese su nombre de usuario")
+                Text(text = usernameError.ifEmpty { "" })
             },
             //Mejora de interfaz de usuario (Salto de campos) Experimental
             singleLine = true,
@@ -105,16 +108,17 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }),
-            modifier = Modifier.focusRequester(currentFocusRequester)
+            modifier = Modifier.focusRequester(currentFocusRequester),
+            isError = usernameError.isNotEmpty()
         )
         Spacer(modifier = Modifier.size(30.dp))
-        Text(text = "Contraseña")
+        Text(text = "Contraseña", fontWeight = FontWeight.Bold, fontSize = 20.sp)
         Spacer(modifier = Modifier.size(10.dp))
         OutlinedTextField(
             value = state.password,
             onValueChange = { viewModel.inputCredentials(state.username, it) },
             label = {
-                Text(text = "Ingrese su contraseña")
+                Text(text = passwordError.ifEmpty { "" })
             },
             visualTransformation = PasswordVisualTransformation(),
             singleLine = true,
@@ -122,20 +126,38 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
             keyboardActions = KeyboardActions(onDone = {
                 keyboardController?.hide()
             }),
-            modifier = Modifier.focusRequester(nextFocusRequester)
+            modifier = Modifier.focusRequester(nextFocusRequester),
+            isError = passwordError.isNotEmpty()
         )
         Spacer(modifier = Modifier.size(20.dp))
 
         Button(
-            onClick = {
-                if (state.username == "die-san" && state.password == "d3v3l0per"){
-                    state.loginSuccess = true
-                }
-                if(state.loginSuccess){
-                    navController.navigate(AppScreens.GreetingsScreen.route)
-                } else {
-                    navController.navigate(AppScreens.LoginScreen.route)
 
+            onClick = {
+                // Verifica si los campos están vacíos
+                if (state.username.isEmpty()) {
+                    usernameError = "El nombre de usuario es requerido"
+                } else {
+                    usernameError = ""
+                }
+
+                if (state.password.isEmpty()) {
+                    passwordError = "La contraseña es requerida"
+                } else {
+                    passwordError = ""
+                }
+
+                // Si no hay errores, realiza la lógica de inicio de sesión
+                if (usernameError.isEmpty() && passwordError.isEmpty()) {
+                    if (state.username == "die-san" && state.password == "d3v3l0per"){
+                        state.loginSuccess = true
+                    }
+                    if(state.loginSuccess){
+                        navController.navigate(AppScreens.GreetingsScreen.route)
+                    } else {
+                        passwordError = "Credenciales incorrectas"
+                        usernameError = "Credenciales incorrectas"
+                    }
                 }
             },
             colors = ButtonDefaults.buttonColors(containerColor = OrangeYellow, contentColor = BlueNight),

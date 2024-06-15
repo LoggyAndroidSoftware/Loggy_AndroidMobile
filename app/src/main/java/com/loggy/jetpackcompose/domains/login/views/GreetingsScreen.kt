@@ -1,6 +1,7 @@
 package com.example.login.App
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,15 +20,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.navigation.AppScreens
+import com.loggy.jetpackcompose.ui.theme.LightWhiteBlue
 import kotlinx.coroutines.delay
 
 @Composable
 fun GreetingsScreen(navController: NavController){
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(LightWhiteBlue)
+        ,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
+
     ){
 
         Image(
@@ -38,7 +44,7 @@ fun GreetingsScreen(navController: NavController){
 
         Spacer(modifier = Modifier.size(20.dp))
 
-        Text(text = "Bienvenido, Usuario", fontSize = 28.sp, fontWeight = FontWeight.Medium)
+        Text(text = "Bienvenido, Diego Sánchez", fontSize = 28.sp, fontWeight = FontWeight.Medium)
 
         LaunchedEffect(key1 = true) {
             delay(3000) // Espera 3 segundos
