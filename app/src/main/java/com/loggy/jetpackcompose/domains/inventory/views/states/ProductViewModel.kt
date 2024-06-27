@@ -25,7 +25,8 @@ class ProductViewModel(
     // Busqueda de productos
     var searchText by mutableStateOf("")
     private set
-
+    // Filtros de busqueda
+    var searchFilters by mutableStateOf(List(3) { index -> index == 0 })
     var state by mutableStateOf(ProductState())
         private set
 
@@ -37,7 +38,15 @@ class ProductViewModel(
     //Lista filtrada de Productos
     private val _filteredProducts = MutableStateFlow(listOf<Product>())
     val filteredProducts: StateFlow<List<Product>> = _filteredProducts
-
+    fun updateFilters(searchText: String, searchByName: Boolean, searchByBrand: Boolean, searchByStock: Boolean) {
+        this.searchText = searchText
+        val searchTextTrimmed = searchText.trim()
+        _filteredProducts.value = products.value.filter { product ->
+            (searchByName && product.name.contains(searchText, ignoreCase = true)) ||
+                    (searchByBrand && product.brand.contains(searchTextTrimmed, ignoreCase = true)) ||
+                    (searchByStock && product.stock.toString().contains(searchTextTrimmed))
+        }
+    }
     fun updateSearchText(newText: String) {
         searchText = newText
         _filteredProducts.value = products.value.filter { it.name.contains(searchText, ignoreCase = true) }

@@ -18,7 +18,7 @@ import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
 @Composable
 fun AppNavigation(viewLoginModel: LoginViewModel, viewProductModel: ProductViewModel){
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = AppScreens.InventoryScreen.route){
+        NavHost(navController = navController, startDestination = AppScreens.InventoryScreen.route){
         composable(AppScreens.LoginScreen.route){
             LoginScreen(viewLoginModel, navController)
         }

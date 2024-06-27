@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
@@ -27,6 +28,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
+import androidx.compose.material3.Checkbox
 
 
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -96,7 +98,6 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
     Scaffold(
         containerColor = LoggyBackground2,
         topBar = {
-
             TopAppBar(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -128,15 +129,16 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                             fontFamily = FontFamily(Font(R.font.zillaslab)),
 
                             );
+                        val areOtherFiltersUsed = viewModel.searchFilters.drop(1).any { it } // Ignora el primer filtro (nombre)
+
                         Icon(
                             painter = painterResource(id = R.drawable.vector_manage_search),
                             contentDescription = "Inventory Icon",
-                            tint = LoggyYellow,
+                            tint = if (areOtherFiltersUsed) Color.White else LoggyYellow, // Si se están utilizando otros filtros, el color del icono es blanco
                             modifier = Modifier
                                 .aspectRatio(0.05f)
                                 .clickable { showDialog = true }
-
-                        );
+                        )
                         Icon(
                             painter = painterResource(id = R.drawable.vector_printer),
                             contentDescription = "Inventory Icon",
@@ -171,17 +173,37 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                 onDismissRequest = { showDialog = false },
                 title = { Text("Filtros") },
                 text = {
-                    val filtros = listOf("Filtro 1", "Filtro 2", "Filtro 3")
+                    val filtros = listOf("Buscar por nombre", "Buscar por marca", "Buscar por stock")
+
                     LazyColumn {
-                        items(filtros) { filtro ->
-                            Text(filtro, Modifier.clickable { /* Manejar clic en el filtro */ })
+                        itemsIndexed(filtros) { index, filtro ->
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Checkbox(
+                                    checked = viewModel.searchFilters[index],
+                                    onCheckedChange = { isChecked ->
+                                        viewModel.searchFilters = viewModel.searchFilters.toMutableList().also { it[index] = isChecked }
+                                        viewModel.updateFilters(
+                                            searchText = viewModel.searchText,
+                                            searchByName = viewModel.searchFilters[0],
+                                            searchByBrand = viewModel.searchFilters[1],
+                                            searchByStock = viewModel.searchFilters[2]
+                                        )
+                                    }
+                                )
+                                Text(filtro, Modifier.clickable {
+                                    viewModel.searchFilters = viewModel.searchFilters.toMutableList().also { it[index] = !it[index] }
+                                    viewModel.updateFilters(
+                                        searchText = viewModel.searchText,
+                                        searchByName = viewModel.searchFilters[0],
+                                        searchByBrand = viewModel.searchFilters[1],
+                                        searchByStock = viewModel.searchFilters[2]
+                                    )
+                                })
+                            }
                         }
                     }
                 },
                 confirmButton = {
-                    Button(onClick = { showDialog = false }) {
-                        Text("Aceptar")
-                    }
                 },
                 dismissButton = {
                     Button(onClick = { showDialog = false }) {
@@ -281,7 +303,6 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
 
 @Composable
 fun SearchWithFilters(viewModel: ProductViewModel) {
-
     var searchText by remember { mutableStateOf("") }
 
     Column(
@@ -291,18 +312,17 @@ fun SearchWithFilters(viewModel: ProductViewModel) {
             value = searchText,
             onValueChange = { newText ->
                 searchText = newText
-                viewModel.updateSearchText(newText)
+                viewModel.updateFilters(searchText = newText,
+                    searchByName = viewModel.searchFilters[0],
+                    searchByBrand = viewModel.searchFilters[1],
+                    searchByStock = viewModel.searchFilters[2])
             },
             label = { Text("Buscar") },
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable {
-
-                }
+                .clickable { }
         )
-        // ...
     }
 }
-
 
 
