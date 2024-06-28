@@ -114,7 +114,7 @@ fun BodyContent(viewModel: ProductViewModel, navController: NavController){
         Spacer(modifier = Modifier.height(15.dp))
         TextField(value = state.name ,
             onValueChange = {
-            viewModel.onNameChange(it, state.brand, state.stock)
+            viewModel.onNameChange(it, state.brand, state.stock, state.batch)
 
         },
             singleLine = true
@@ -130,7 +130,7 @@ fun BodyContent(viewModel: ProductViewModel, navController: NavController){
         )
         Spacer(modifier = Modifier.height(15.dp))
         TextField(value = state.brand , onValueChange = {
-            viewModel.onNameChange(state.name, it, state.stock)
+            viewModel.onNameChange(state.name, it, state.stock, state.batch)
         },
                 singleLine = true
         )
@@ -146,11 +146,25 @@ fun BodyContent(viewModel: ProductViewModel, navController: NavController){
         Spacer(modifier = Modifier.height(15.dp))
         TextField(value = state.stock.toString() , onValueChange = {
             val stock = it.toIntOrNull() ?: 0
-            viewModel.onNameChange(state.name, state.brand, stock)
+            viewModel.onNameChange(state.name, state.brand, stock,  state.batch)
         },
                 singleLine = true
         )
         Spacer(modifier = Modifier.height(30.dp))
+        Text(
+            text = "Agregar lote del Producto",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = FontFamily(Font(R.font.zillaslab)),
+            color = SkyNightBlue//
+        )
+        Spacer(modifier = Modifier.height(15.dp))
+        TextField(value = state.batch , onValueChange = {
+            viewModel.onNameChange(state.name, state.brand, state.stock, it)
+        },
+            singleLine = true
+        )
+        Spacer(modifier = Modifier.height(20.dp))
         Button(
             colors = ButtonDefaults.buttonColors(
                 containerColor = SkyNightBlue,

@@ -2,7 +2,6 @@ package com.example.inventorymodule.components
 
 
 import android.content.Context
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,6 +17,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ProductViewModel(
     private val repository: ProductRepository
@@ -42,20 +44,21 @@ class ProductViewModel(
         this.searchText = searchText
         val searchTextTrimmed = searchText.trim()
         _filteredProducts.value = products.value.filter { product ->
-            (searchByName && product.name.contains(searchText, ignoreCase = true)) ||
+            (searchByName && product.codename.contains(searchText, ignoreCase = true)) ||
                     (searchByBrand && product.brand.contains(searchTextTrimmed, ignoreCase = true)) ||
                     (searchByStock && product.stock.toString().contains(searchTextTrimmed))
         }
     }
     fun updateSearchText(newText: String) {
         searchText = newText
-        _filteredProducts.value = products.value.filter { it.name.contains(searchText, ignoreCase = true) }
+        _filteredProducts.value = products.value.filter { it.codename.contains(searchText, ignoreCase = true) }
     }
-    fun onNameChange(name: String, brand: String, stock: Int) {
+    fun onNameChange(name: String, brand: String, stock: Int, batch: String) {
         state = state.copy(
             name = name,
             brand = brand,
-            stock = stock
+            stock = stock,
+            batch = batch
         )
     }
     fun getProducts() {
@@ -67,9 +70,11 @@ class ProductViewModel(
 
     fun insertProduct() {
         val product = Product(
-            name = state.name,
+            codename = state.name,
             brand = state.brand,
-            stock = state.stock
+            stock = state.stock,
+            batch = state.batch,
+            date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis())
         )
         viewModelScope.launch { repository.insertProduct(product) }
 
@@ -89,16 +94,19 @@ class ProductViewModel(
 
                 // Actualiza la lista de productos
                 _products.value = repository.getProducts()
-                _filteredProducts.value = _products.value.filter { it.name.contains(searchText, ignoreCase = true) }
+                _filteredProducts.value = _products.value.filter { it.codename.contains(searchText, ignoreCase = true) }
             }
         }
     }
     fun updateProduct() {
         val product = Product(
             id = state.id,
-            name = state.name,
+            codename = state.name,
             brand = state.brand,
-            stock = state.stock
+            stock = state.stock,
+            batch = state.batch,
+            date = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+
         )
         viewModelScope.launch { repository.updateProduct(product) }
     }
@@ -107,9 +115,11 @@ class ProductViewModel(
             val product = repository.getProductById(productId)
             state = state.copy(
                 id = product.id,
-                name = product.name,
+                name = product.codename,
                 brand = product.brand,
-                stock = product.stock
+                stock = product.stock,
+                batch = product.batch,
+                date = product.date
             )
         }
     }

@@ -86,7 +86,7 @@ fun createPDF(products: List<Product>, filePath: String) {
 
     // Add rows
     for (product in products) {
-        table.addCell(PdfPCell(Phrase(product.name)))
+        table.addCell(PdfPCell(Phrase(product.codename)))
         table.addCell(PdfPCell(Phrase(product.brand)))
         table.addCell(PdfPCell(Phrase(product.stock.toString())))
     }

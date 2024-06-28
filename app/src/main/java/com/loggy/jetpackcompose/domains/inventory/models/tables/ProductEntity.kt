@@ -13,7 +13,10 @@ data class ProductEntity(
     @ColumnInfo("brand")
     val brand:String,
     @ColumnInfo("stock")
-    val stock: Int
-
+    val stock: Int,
+    @ColumnInfo("batch")
+    val batch: String,
+    @ColumnInfo("date")
+    val date: String
 
 )

@@ -9,5 +9,7 @@ data class ProductState(
     val name: String = "",
     val brand: String = "",
     val stock: Int = 0,
+    val batch: String = "",
+    val date: String = "",
     val productEntities: List<Product> = emptyList()
 )

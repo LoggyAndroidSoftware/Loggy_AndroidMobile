@@ -5,8 +5,11 @@ package com.loggy.jetpackcompose.domains.inventory.views
 
 
 
-import android.content.Context
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,17 +20,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.Checkbox
 
 
@@ -53,7 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -61,30 +60,50 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 
 
 
 import com.example.inventorymodule.components.ProductViewModel
 import com.loggy.jetpackcompose.R
-import com.loggy.jetpackcompose.domains.inventory.models.Product
-import com.loggy.jetpackcompose.domains.inventory.views.utils.getOutputDirectory
 import com.loggy.jetpackcompose.navigation.AppScreens
-import com.loggy.jetpackcompose.ui.theme.LoggyBackground
 import com.loggy.jetpackcompose.ui.theme.LoggyBackground2
 import com.loggy.jetpackcompose.ui.theme.LoggyYellow
 import com.loggy.jetpackcompose.ui.theme.SkyNightBlue
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-import com.loggy.jetpackcompose.domains.inventory.views.utils.*
-import kotlinx.coroutines.launch
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun HomeIcon(navController: NavHostController) {
+    // Crear un estado mutable para el color del icono
+    val iconColor = remember { mutableStateOf(LoggyYellow) }
+    // Crear un estado de interacción
+    val interactionState = remember { MutableInteractionSource() }
 
-
+    Icon(
+        painter = painterResource(id = R.drawable.vector_home),
+        contentDescription = "Inventory Icon",
+        tint = iconColor.value, // Usar el estado del color del icono
+        modifier = Modifier
+            .aspectRatio(0.05f)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        iconColor.value = Color.White
+                        tryAwaitRelease()
+                        iconColor.value = LoggyYellow
+                    }
+                )
+            }
+            .combinedClickable(
+                onClick = { navController.navigate(AppScreens.HomeScreen.route) }
+            )
+    )
+}
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController){
@@ -93,7 +112,8 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
         viewModel.getProducts()
     }
     var showDialog by remember { mutableStateOf(false) }
-    var showPrintDialog by remember { mutableStateOf(false) }
+    var optionDialog = 0
+    var productIndexToDelete by remember { mutableStateOf(-1) }
 
     Scaffold(
         containerColor = LoggyBackground2,
@@ -114,13 +134,22 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val areOtherFiltersUsed = viewModel.searchFilters.drop(1).any { it } // Ignora el primer filtro (nombre)
+
+                        HomeIcon(navController = navController)
+                        /*
                         Icon(
                             painter = painterResource(id = R.drawable.vector_home),
                             contentDescription = "Inventory Icon",
-                            tint = LoggyYellow,
-                            modifier = Modifier.aspectRatio(0.05f)
+                            tint = iconColor.value,
+                            modifier = Modifier
+                                .aspectRatio(0.05f)
+                                .indication(interactionState, indication = null)
+                                .clickable(
+                                    onClick = {navController.navigate(AppScreens.HomeScreen.route)},
+                                    )
                         );
-
+                        */
                         Text(
                             text = "Inventory",
                             color = LoggyYellow,
@@ -129,7 +158,6 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                             fontFamily = FontFamily(Font(R.font.zillaslab)),
 
                             );
-                        val areOtherFiltersUsed = viewModel.searchFilters.drop(1).any { it } // Ignora el primer filtro (nombre)
 
                         Icon(
                             painter = painterResource(id = R.drawable.vector_manage_search),
@@ -137,7 +165,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                             tint = if (areOtherFiltersUsed) Color.White else LoggyYellow, // Si se están utilizando otros filtros, el color del icono es blanco
                             modifier = Modifier
                                 .aspectRatio(0.05f)
-                                .clickable { showDialog = true }
+                                .clickable { showDialog = true; optionDialog = 1 }
                         )
                         Icon(
                             painter = painterResource(id = R.drawable.vector_printer),
@@ -145,7 +173,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                             tint = LoggyYellow,
                             modifier = Modifier
                                 .aspectRatio(0.05f)
-                                .clickable { showPrintDialog = true }
+                                .clickable { showDialog = true; optionDialog = 2 }
                         )
                     }
 
@@ -168,7 +196,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
     ) { innerPadding ->
 
         // Cuadro emergente de filtros
-        if (showDialog) {
+        if (showDialog && optionDialog == 1) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 title = { Text("Filtros") },
@@ -213,15 +241,37 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
             )
         }
         // Cuadro emergente de impresión
-        if(showPrintDialog){
+        if(showDialog  && optionDialog == 2){
             val context = LocalContext.current
             val productsToPrint = products
             LaunchedEffect(key1 = productsToPrint) {
                 viewModel.printProducts(context, productsToPrint)
             }
-            showPrintDialog = false
+            showDialog = false
         }
-
+        if (showDialog && optionDialog == 3) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Confirmación") },
+                text = { Text("¿Estás seguro de que quieres eliminar este elemento?") },
+                confirmButton = {
+                    Button(onClick = {
+                        if (productIndexToDelete != -1) {
+                            viewModel.deleteProduct(productIndexToDelete)
+                            productIndexToDelete = -1
+                        }
+                        showDialog = false
+                    }) {
+                        Text("Confirmar")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { showDialog = false }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
         Column(
             modifier = Modifier.padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -252,12 +302,21 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                                 modifier = Modifier.padding(8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+
                                 Column(
                                     modifier = Modifier.weight(1f),
                                     verticalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text(text = products[index].name, fontWeight = FontWeight.Bold)
-                                    Text(text = products[index].brand + " - " + products[index].stock.toString())
+                                    Text(text = products[index].codename, fontWeight = FontWeight.Bold)
+                                    Text(text = "Marca: " +products[index].brand + " | " + products[index].stock.toString()+ " Unidades")
+                                    // Parsear y formatear la fecha
+                                    val originalFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+                                    val targetFormat = SimpleDateFormat("dd 'de' MMMM", Locale("es", "ES"))
+                                    val date = originalFormat.parse(products[index].date)
+                                    val formattedDate = if (date != null) targetFormat.format(date) else "Fecha no disponible"
+
+                                    // Mostrar la fecha formateada
+                                    Text(text = formattedDate)
                                 }
                                 Column(
                                     verticalArrangement = Arrangement.SpaceBetween,
@@ -286,7 +345,11 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                                         contentDescription = "Eliminar producto",
                                         modifier = Modifier
                                             .size(50.dp)
-                                            .clickable { viewModel.deleteProduct(index) }
+                                            .clickable {
+                                                productIndexToDelete = index
+                                                showDialog = true
+                                                optionDialog = 3
+                                            }
                                     )
                                 }
                             }
@@ -296,9 +359,9 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
             }
 
         }
+
     }
 }
-
 
 
 @Composable

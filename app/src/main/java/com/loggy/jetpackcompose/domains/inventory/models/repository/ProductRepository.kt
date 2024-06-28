@@ -13,18 +13,22 @@ class ProductRepository (private val ProductsDAO: ProductDAO){
         return products.map {
             Product(
                 id = it.id,
-                name = it.name,
+                codename = it.name,
                 brand = it.brand,
-                stock = it.stock)
+                stock = it.stock,
+                batch = it.batch,
+                date = it.date)
         }
     }
     suspend fun insertProduct(product: Product){
         ProductsDAO.insertProduct(
             ProductEntity(
             id = null,
-            name = product.name,
+            name = product.codename,
             brand = product.brand,
-            stock = product.stock
+            stock = product.stock,
+            batch = product.batch,
+            date = product.date
         )
         )
     }
@@ -37,9 +41,12 @@ class ProductRepository (private val ProductsDAO: ProductDAO){
         ProductsDAO.updateProduct(
             ProductEntity(
                 id = product.id,
-                name = product.name,
+                name = product.codename,
                 brand = product.brand,
-                stock = product.stock
+                stock = product.stock,
+                batch = product.batch,
+                date = product.date
+
             )
         )
     }
@@ -48,9 +55,11 @@ class ProductRepository (private val ProductsDAO: ProductDAO){
         val productEntity = ProductsDAO.getProductById(productId)
         return Product(
             id = productEntity.id,
-            name = productEntity.name,
+            codename = productEntity.name,
             brand = productEntity.brand,
-            stock = productEntity.stock
+            stock = productEntity.stock,
+            batch = productEntity.batch,
+            date = productEntity.date
         )
     }
 
