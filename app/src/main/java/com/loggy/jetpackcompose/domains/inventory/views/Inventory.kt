@@ -66,12 +66,14 @@ import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 
 
 
 import com.example.inventorymodule.components.ProductViewModel
 import com.loggy.jetpackcompose.R
+import com.loggy.jetpackcompose.domains.inventory.views.utils.SignaturePad
 import com.loggy.jetpackcompose.domains.inventory.views.utils.createPDF
 
 import com.loggy.jetpackcompose.navigation.AppScreens
@@ -257,6 +259,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
         // Cuadro emergente de impresión
         if(showDialog  && optionDialog == 2){
             var fileName by remember { mutableStateOf("") }
+            val signaturePad = remember { SignaturePad(context) }
 
             AlertDialog(
                 onDismissRequest = { showDialog = false },
@@ -269,12 +272,14 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                             onValueChange = { fileName = it },
                             label = { Text("Nombre del archivo") }
                         )
+                        AndroidView({ signaturePad }) // Agregar la vista de SignaturePad a la columna
                     }
                 },
                 confirmButton = {
                     Button(onClick = {
                         if (fileName.isNotBlank() && isValidFileName(fileName)) {
-                            createPDF(products, fileName)
+                            val signatureBitmap = signaturePad.getSignatureBitmap()
+                            createPDF(products, fileName, signatureBitmap) // Pasar el Bitmap de la firma a la función createPDF
                             showDialog = false
                             val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).absolutePath + "/LoggyInventories"
                             val file = File(path, "$fileName.pdf")
