@@ -5,11 +5,13 @@ package com.loggy.jetpackcompose.domains.inventory.views
 
 
 
+import android.os.Environment
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -69,20 +72,24 @@ import androidx.navigation.NavHostController
 
 import com.example.inventorymodule.components.ProductViewModel
 import com.loggy.jetpackcompose.R
+import com.loggy.jetpackcompose.domains.inventory.views.utils.createPDF
+
 import com.loggy.jetpackcompose.navigation.AppScreens
 import com.loggy.jetpackcompose.ui.theme.LoggyBackground2
 import com.loggy.jetpackcompose.ui.theme.LoggyYellow
 import com.loggy.jetpackcompose.ui.theme.SkyNightBlue
+import com.loggy.jetpackcompose.utils.permissions.checkPermission
+import com.loggy.jetpackcompose.utils.permissions.requestPermissions
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeIcon(navController: NavHostController) {
     // Crear un estado mutable para el color del icono
     val iconColor = remember { mutableStateOf(LoggyYellow) }
-    // Crear un estado de interacción
-    val interactionState = remember { MutableInteractionSource() }
 
     Icon(
         painter = painterResource(id = R.drawable.vector_home),
@@ -108,12 +115,20 @@ fun HomeIcon(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController){
     val products by viewModel.filteredProducts.collectAsState()
+
+    val context = LocalContext.current
     LaunchedEffect(key1 = Unit) {
+        if (checkPermission(context)) {
+            Toast.makeText(context, "Permiso Aceptado", Toast.LENGTH_LONG).show()
+        } else {
+            requestPermissions(context)
+        }
         viewModel.getProducts()
+
     }
     var showDialog by remember { mutableStateOf(false) }
     var optionDialog = 0
-    var productIndexToDelete by remember { mutableStateOf(-1) }
+    var productIndexToDelete by remember { mutableIntStateOf(-1) }
 
     Scaffold(
         containerColor = LoggyBackground2,
@@ -156,8 +171,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                             style = MaterialTheme.typography.headlineLarge,
                             textAlign = TextAlign.Justify,
                             fontFamily = FontFamily(Font(R.font.zillaslab)),
-
-                            );
+                            )
 
                         Icon(
                             painter = painterResource(id = R.drawable.vector_manage_search),
@@ -242,13 +256,48 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
         }
         // Cuadro emergente de impresión
         if(showDialog  && optionDialog == 2){
-            val context = LocalContext.current
-            val productsToPrint = products
-            LaunchedEffect(key1 = productsToPrint) {
-                viewModel.printProducts(context, productsToPrint)
-            }
-            showDialog = false
+            var fileName by remember { mutableStateOf("") }
+
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("Imprimir") },
+                text = {
+                    Column {
+                        Text("¿Estás seguro de que quieres imprimir los productos seleccionados?")
+                        TextField(
+                            value = fileName,
+                            onValueChange = { fileName = it },
+                            label = { Text("Nombre del archivo") }
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        if (fileName.isNotBlank() && isValidFileName(fileName)) {
+                            createPDF(products, fileName)
+                            showDialog = false
+                            val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).absolutePath + "/LoggyInventories"
+                            val file = File(path, "$fileName.pdf")
+                            if (file.exists()) {
+                                Toast.makeText(context, "El archivo PDF se ha guardado con éxito", Toast.LENGTH_LONG).show()
+                            } else {
+                                Toast.makeText(context, "Error al guardar el archivo PDF", Toast.LENGTH_LONG).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Por favor, ingresa un nombre válido para el archivo", Toast.LENGTH_SHORT).show()
+                        }
+                    }) {
+                        Text("Confirmar")
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = { showDialog = false }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
+
         if (showDialog && optionDialog == 3) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
@@ -363,7 +412,9 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
     }
 }
 
-
+fun isValidFileName(fileName: String): Boolean {
+    return fileName.all { it.isLetterOrDigit() || it == '-' || it == '_' || it == ' ' }
+}
 @Composable
 fun SearchWithFilters(viewModel: ProductViewModel) {
     var searchText by remember { mutableStateOf("") }

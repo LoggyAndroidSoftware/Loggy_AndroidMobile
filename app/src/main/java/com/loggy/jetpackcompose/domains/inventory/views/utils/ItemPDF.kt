@@ -3,103 +3,62 @@ package com.loggy.jetpackcompose.domains.inventory.views.utils
 import android.os.Environment
 import java.io.File
 
-import android.content.Context
-import android.print.PrintAttributes
-import android.print.PrintManager
-import android.print.pdf.PrintedPdfDocument
-import android.graphics.pdf.PdfDocument.PageInfo
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.pdf.PdfDocument.Page
-import android.os.Bundle
-import android.os.CancellationSignal
-import android.os.ParcelFileDescriptor
-import android.print.PageRange
-import android.print.PrintDocumentAdapter
-import android.print.PrintDocumentInfo
-
 import java.io.FileOutputStream
 
+
+import com.itextpdf.text.BaseColor
 import com.itextpdf.text.Document
-import com.itextpdf.text.Phrase
-import com.itextpdf.text.pdf.PdfPCell
+import com.itextpdf.text.FontFactory
+import com.itextpdf.text.Paragraph
 import com.itextpdf.text.pdf.PdfPTable
 import com.itextpdf.text.pdf.PdfWriter
 import com.loggy.jetpackcompose.domains.inventory.models.Product
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
-fun printPDF(context: Context, filePath: String) {
-    val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
-    val printAdapter = object : PrintDocumentAdapter() {
-        override fun onLayout(oldAttributes: PrintAttributes?, newAttributes: PrintAttributes?, cancellationSignal: CancellationSignal?, callback: LayoutResultCallback?, extras: Bundle?) {
-            if (cancellationSignal?.isCanceled == true) {
-                callback?.onLayoutCancelled()
-                return
-            }
-            callback?.onLayoutFinished(PrintDocumentInfo.Builder(filePath).setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT).build(), true)
-        }
-
-        override fun onWrite(pages: Array<out PageRange>?, output: ParcelFileDescriptor?, cancellationSignal: CancellationSignal?, callback: WriteResultCallback?) {
-            try {
-                val pdfDocument = PrintedPdfDocument(context, PrintAttributes.Builder().build())
-                val pageInfo = PageInfo.Builder(595, 842, 1).create() // A4 size in points
-                val page: Page = pdfDocument.startPage(pageInfo)
-                val canvas: Canvas = page.canvas
-                val paint = Paint()
-                paint.color = Color.BLACK
-                paint.textSize = 14f
-
-                val file = File(filePath)
-                val lines = file.readLines()
-                var y = 25f
-                for (line in lines) {
-                    canvas.drawText(line, 10f, y, paint)
-                    y += paint.descent() - paint.ascent()
-                }
-
-                pdfDocument.finishPage(page)
-                FileOutputStream(filePath).use { fos ->
-                    pdfDocument.writeTo(fos)
-                }
-                pdfDocument.close()
-                callback?.onWriteFinished(arrayOf(PageRange.ALL_PAGES))
-            } catch (e: Exception) {
-                callback?.onWriteFailed(e.message)
-            }
-        }
+fun createPDF(products: List<Product>, fileName: String) {
+    val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).absolutePath + "/LoggyInventories"
+    val dir = File(path)
+    if (!dir.exists()) {
+        dir.mkdirs()
     }
-    printManager.print("Document", printAdapter, PrintAttributes.Builder().build())
-}
-
-fun createPDF(products: List<Product>, filePath: String) {
+    val file = File(dir, "$fileName.pdf")
+    val fileOutputStream = FileOutputStream(file)
     val document = Document()
-    PdfWriter.getInstance(document, FileOutputStream(filePath))
+
+    PdfWriter.getInstance(document, fileOutputStream)
+
     document.open()
+    //Titulo del documento
+    val title = Paragraph("Inventario de productos \n\n",
+        FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22f, BaseColor.BLACK))
+    title.alignment = Paragraph.ALIGN_CENTER
+    document.add(title)
 
-    val table = PdfPTable(3) // 3 columns.
+    // Subtítulo con la fecha y hora actuales
+    val currentDateTime = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(Date())
+    val subtitle = Paragraph("Generado el: $currentDateTime \n\n",
+        FontFactory.getFont(FontFactory.HELVETICA, 18f, BaseColor.BLACK))
+    subtitle.alignment = Paragraph.ALIGN_CENTER
+    document.add(subtitle)
 
-    // Add column headers
-    table.addCell(PdfPCell(Phrase("Product Name")))
-    table.addCell(PdfPCell(Phrase("Brand")))
-    table.addCell(PdfPCell(Phrase("Stock")))
+    //Tabla de productos
+    var table = PdfPTable(4)
+    table.addCell("Producto")
+    table.addCell("Marca")
+    table.addCell("Lote")
+    table.addCell("Cantidad")
 
-    // Add rows
-    for (product in products) {
-        table.addCell(PdfPCell(Phrase(product.codename)))
-        table.addCell(PdfPCell(Phrase(product.brand)))
-        table.addCell(PdfPCell(Phrase(product.stock.toString())))
+    for (it in products){
+        table.addCell(it.codename)
+        table.addCell(it.brand)
+        table.addCell(it.batch)
+        table.addCell(it.stock.toString())
     }
-
     document.add(table)
     document.close()
+
 }
 
-fun getOutputDirectory(): File {
-    val mediaDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-    val fileDir = File(mediaDir, "Loggy")
-    if (!fileDir.exists()) {
-        fileDir.mkdirs()
-    }
-    return fileDir
-}
