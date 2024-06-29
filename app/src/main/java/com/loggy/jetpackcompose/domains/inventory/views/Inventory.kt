@@ -8,6 +8,7 @@ package com.loggy.jetpackcompose.domains.inventory.views
 import android.os.Environment
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 
@@ -36,10 +38,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 
@@ -263,20 +268,43 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
 
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                title = { Text("Imprimir") },
+                title = { Text("Imprimir", color = SkyNightBlue, fontFamily = FontFamily(Font(R.font.zillaslab)) ) },
                 text = {
                     Column {
-                        Text("¿Estás seguro de que quieres imprimir los productos seleccionados?")
-                        TextField(
+                        Text("Agrega un nombre para el archivo PDF",
+                            color = SkyNightBlue,
+                            textAlign = TextAlign.Center
+                            )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        OutlinedTextField(
                             value = fileName,
                             onValueChange = { fileName = it },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                cursorColor = SkyNightBlue,
+                                focusedBorderColor = SkyNightBlue,
+                                unfocusedBorderColor = SkyNightBlue,
+                            ),
                             label = { Text("Nombre del archivo") }
                         )
-                        AndroidView({ signaturePad }) // Agregar la vista de SignaturePad a la columna
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Dibuje su firma:")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        // Agregar la vista de SignaturePad a la columna
+                        AndroidView({ signaturePad },
+                            modifier = Modifier.border(2.dp, SkyNightBlue)
+                                .height(150.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 },
                 confirmButton = {
-                    Button(onClick = {
+                    Button(
+                        modifier = Modifier.height(60.dp),
+                        colors = ButtonDefaults.buttonColors(
+                        containerColor = SkyNightBlue,
+                        contentColor = LoggyYellow
+                        ),
+                        onClick = {
                         if (fileName.isNotBlank() && isValidFileName(fileName)) {
                             val signatureBitmap = signaturePad.getSignatureBitmap()
                             createPDF(products, fileName, signatureBitmap) // Pasar el Bitmap de la firma a la función createPDF
@@ -296,7 +324,13 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                     }
                 },
                 dismissButton = {
-                    Button(onClick = { showDialog = false }) {
+                    Button(
+                        modifier = Modifier.height(60.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = SkyNightBlue,
+                            contentColor = LoggyYellow
+                        ),
+                        onClick = { showDialog = false }) {
                         Text("Cancelar")
                     }
                 }

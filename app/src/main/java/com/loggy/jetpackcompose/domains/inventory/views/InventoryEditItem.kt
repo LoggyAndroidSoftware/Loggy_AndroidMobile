@@ -1,6 +1,7 @@
 package com.loggy.jetpackcompose.domains.inventory.views
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Scaffold
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -39,6 +42,7 @@ import com.loggy.jetpackcompose.navigation.AppScreens
 import com.loggy.jetpackcompose.ui.theme.LoggyBackground2
 import com.loggy.jetpackcompose.ui.theme.LoggyYellow
 import com.loggy.jetpackcompose.ui.theme.SkyNightBlue
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -88,6 +92,8 @@ fun InventoryEditItem(viewModel: ProductViewModel, navController: NavController,
 @Composable
 fun EditBodyContent(viewModel: ProductViewModel, navController: NavController){
     val state = viewModel.state
+    val context = LocalContext.current
+    val validBrands = listOf("Mobil", "Texaco", "Vistony", "Petroperu")
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -120,10 +126,19 @@ fun EditBodyContent(viewModel: ProductViewModel, navController: NavController){
             color = SkyNightBlue//
         )
         Spacer(modifier = Modifier.height(15.dp))
-        TextField(value = state.brand , onValueChange = {
-            viewModel.onNameChange(state.name, it, state.stock, state.batch)
-        },
-            singleLine = true
+        TextField(
+            value = state.brand,
+            onValueChange = {
+                val capitalizedBrand = it.capitalize(Locale.ROOT)
+                viewModel.onNameChange(state.name, capitalizedBrand, state.stock, state.batch)
+            },
+            singleLine = true,
+            keyboardActions = KeyboardActions(onDone = {
+                if (state.brand !in validBrands) {
+                    Toast.makeText(context, "La marca no es válida", Toast.LENGTH_SHORT).show()
+                    viewModel.onNameChange(state.name, "", state.stock, state.batch) // Reset the brand field
+                }
+            })
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -164,10 +179,14 @@ fun EditBodyContent(viewModel: ProductViewModel, navController: NavController){
             ),
             modifier = Modifier.height(60.dp),
             onClick = {
-            viewModel.updateProduct()
-            viewModel.resetState()
-            viewModel.showSnackbar = true
-                navController.navigate(AppScreens.InventoryScreen.route)
+                if (state.name.isBlank() || state.brand.isBlank() || state.batch.isBlank()) {
+                    Toast.makeText(context, "Todos los campos deben ser rellenados", Toast.LENGTH_SHORT).show()
+                } else {
+                    viewModel.updateProduct()
+                    viewModel.resetState()
+                    viewModel.showSnackbar = true
+                    navController.navigate(AppScreens.InventoryScreen.route)
+                }
         }) {
             Text(text = "Guardar")
         }
