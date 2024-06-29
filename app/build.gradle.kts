@@ -87,8 +87,7 @@ dependencies {
     //Coil dependences for image loading
     implementation("io.coil-kt:coil-compose:2.6.0")
 
-    //Depedency for PDF Maker
-    implementation("com.itextpdf:itextg:5.5.10")
+
     
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation(libs.androidx.core.ktx)
@@ -106,4 +105,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+
+    //Depedency for PDF Maker
+    implementation("com.itextpdf:itextg:5.5.10")
 }

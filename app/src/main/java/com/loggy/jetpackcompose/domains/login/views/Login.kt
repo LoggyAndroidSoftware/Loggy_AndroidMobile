@@ -112,31 +112,9 @@ fun WelcomeScreen(viewModel: LoginViewModel, navController: NavHostController){
             modifier = Modifier.focusRequester(nextFocusRequester)
         )
         Spacer(modifier = Modifier.size(20.dp))
-
-        Button(
-            onClick = {
-
-                if(state.loginSuccess){
-                    navController.navigate(AppScreens.LoginScreen.route)
-                } else {
-                    navController.navigate(AppScreens.GreetingsScreen.route)
-                }
-            }
-        ) {
-            Text("Iniciar Sesión")
-        }
-        /*
-    if (state.loginSuccess = true){
-        GreetingsScreen()
     }
-    else{
 
 
-
-        }
-    }
-    */
-    }
 }
 
 
