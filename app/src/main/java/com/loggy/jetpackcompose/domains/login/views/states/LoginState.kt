@@ -6,5 +6,5 @@ data class LoginState (
     val username: String = "",
     val password: String = "",
     val userLogged: User = User(null, "", "", "", "", "", ""),
-    val loginSuccess: Boolean = false
+    var loginSuccess: Boolean = false
 )
