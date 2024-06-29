@@ -11,7 +11,9 @@ import com.example.inventorymodule.components.ProductViewModel
 import com.example.login.App.GreetingsScreen
 import com.example.login.App.LoginScreen
 import com.loggy.jetpackcompose.domains.inventory.views.InventoryAddItem
+import com.loggy.jetpackcompose.domains.inventory.views.InventoryEditItem
 import com.loggy.jetpackcompose.domains.inventory.views.InventoryMain
+
 import com.loggy.jetpackcompose.domains.login.views.HomeScreen
 import com.loggy.jetpackcompose.domains.login.views.LineProductScreen
 import com.loggy.jetpackcompose.domains.login.views.states.LoginViewModel
@@ -25,7 +27,9 @@ import androidx.navigation.plusAssign
 fun AppNavigation(viewLoginModel: LoginViewModel, viewProductModel: ProductViewModel){
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route){
+
+        NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route){
+
         composable(AppScreens.LoginScreen.route){
             LoginScreen(viewLoginModel, navController)
         }
@@ -43,6 +47,19 @@ fun AppNavigation(viewLoginModel: LoginViewModel, viewProductModel: ProductViewM
         }
         composable(AppScreens.InventoryAddItemScreen.route){
             InventoryAddItem(viewProductModel, navController)
+        }
+
+        composable(AppScreens.InventoryEditItemScreen.route) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId")?.toIntOrNull()
+            if (productId != null) {
+                InventoryEditItem(viewProductModel, navController, productId)
+            } else {
+                // Manejar el caso en que productId sea null
+            }
+        }
+
+        composable(AppScreens.TestScreen.route){
+
         }
     }
 }

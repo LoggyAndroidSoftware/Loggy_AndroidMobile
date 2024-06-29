@@ -25,17 +25,19 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val db = Room.databaseBuilder(this, LoggyDB::class.java, "product-db").fallbackToDestructiveMigration().build()
+
+        val db = Room.databaseBuilder(this, LoggyDB::class.java, "user-db").fallbackToDestructiveMigration().build()
         val dao = db.dao
 
         val dbProducts = Room.databaseBuilder(this, ProductDB::class.java, "product-db").fallbackToDestructiveMigration().build()
         val daoProducts = dbProducts.dao
-
+        //Productos
         val productRepository = ProductRepository(daoProducts)
         val productViewModel = ProductViewModel(productRepository)
-
+        //Usuarios
         val loginRepository = UserRepository(dao)
         val loginViewModel = LoginViewModel(loginRepository)
+
         setContent {
             LoggyJPCTheme {
                 AppNavigation(loginViewModel, productViewModel)
