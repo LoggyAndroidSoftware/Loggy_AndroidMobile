@@ -173,7 +173,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                         );
                         */
                         Text(
-                            text = "Inventory",
+                            text = "Inventario",
                             color = LoggyYellow,
                             style = MaterialTheme.typography.headlineLarge,
                             textAlign = TextAlign.Justify,
@@ -291,8 +291,7 @@ fun InventoryMain(viewModel: ProductViewModel, navController: NavHostController)
                         Spacer(modifier = Modifier.height(16.dp))
                         // Agregar la vista de SignaturePad a la columna
                         AndroidView({ signaturePad },
-                            modifier = Modifier.border(2.dp, SkyNightBlue)
-                                .height(150.dp)
+                            modifier = Modifier.height(150.dp)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }

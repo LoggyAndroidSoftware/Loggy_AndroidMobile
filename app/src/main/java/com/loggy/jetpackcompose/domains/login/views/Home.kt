@@ -24,14 +24,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.navigation.AppScreens
-import com.loggy.jetpackcompose.ui.theme.LightWhiteBlue
+
+import com.loggy.jetpackcompose.ui.theme.LoggyBackground2
 
 @Composable
 fun HomeScreen(navController: NavController){
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(LightWhiteBlue)
+            .background(LoggyBackground2)
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,

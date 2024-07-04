@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        deleteDatabase("product-db")
         val db = Room.databaseBuilder(this, LoggyDB::class.java, "user-db").fallbackToDestructiveMigration().build()
         val dao = db.dao
 

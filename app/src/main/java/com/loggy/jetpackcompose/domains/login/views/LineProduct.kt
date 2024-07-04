@@ -30,7 +30,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.navigation.AppScreens
-import com.loggy.jetpackcompose.ui.theme.LightWhiteBlue
+
+import com.loggy.jetpackcompose.ui.theme.LoggyBackground2
 
 
 @Composable
@@ -45,7 +46,7 @@ fun LineProductScreen(navController: NavController){
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
-            .background(LightWhiteBlue)
+            .background(LoggyBackground2)
         ,
         verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -79,7 +80,7 @@ fun LineProductScreen(navController: NavController){
                                 modifier = Modifier
                                     .size(100.dp)
                                     .clickable {
-                                        navController.navigate(AppScreens.HomeScreen.route)
+                                        navController.navigate(AppScreens.InventoryScreen.route)
                                         }
                             )
                             Text(text = "Línea ${index + 1}", fontFamily = FontFamily(Font(R.font.zillaslab)), fontSize = 15.sp, fontWeight = FontWeight(400))

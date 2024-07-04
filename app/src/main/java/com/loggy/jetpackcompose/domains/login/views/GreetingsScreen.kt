@@ -20,7 +20,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.loggy.jetpackcompose.R
 import com.loggy.jetpackcompose.navigation.AppScreens
-import com.loggy.jetpackcompose.ui.theme.LightWhiteBlue
+import com.loggy.jetpackcompose.ui.theme.LoggyBackground2
+
 import kotlinx.coroutines.delay
 
 @Composable
@@ -29,7 +30,7 @@ fun GreetingsScreen(navController: NavController){
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(LightWhiteBlue)
+            .background(LoggyBackground2)
         ,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -47,7 +48,7 @@ fun GreetingsScreen(navController: NavController){
         Text(text = "Bienvenido, Diego Sánchez", fontSize = 28.sp, fontWeight = FontWeight.Medium)
 
         LaunchedEffect(key1 = true) {
-            delay(3000) // Espera 3 segundos
+            delay(7000) // Espera 3 segundos
             navController.navigate(AppScreens.LineProductScreen.route) // Navega a la vista deseada
         }
 
